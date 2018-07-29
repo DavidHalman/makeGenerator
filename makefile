@@ -3,3 +3,6 @@ main: main.o
 
 main.o: main.cpp
 	g++ -std=c++1z -c main.cpp -lstdc++fs
+
+clean:
+	rm -f *.o
