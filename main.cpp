@@ -1,31 +1,30 @@
-#include <iostream>
 #include <cstdlib>
 #include <experimental/filesystem>
+#include <iostream>
 #include <fstream>
 #include <regex>
 using namespace std;
 
 bool containsMain(string);
+int isCFile(string);
 
 int main(int argc, char *argv[]){
     for(auto& p: experimental::filesystem::recursive_directory_iterator(argv[1])){
         if(experimental::filesystem::is_regular_file(p)){
-            if(containsMain(p.path())){
-                cout << p.path() << endl;
-            } 
+            cout << p.path() << " " << isCFile(p.path()) << endl;
         }
     }
-
     return 0;
 }
 
 
 //Returns true if the given file contains a main method
 bool containsMain(string path){
-    //Make sure the file is valid
-    if(!regex_match(path, regex(".+cpp"))){ //TODO Make work with cxx, C, c files
+    //Make sure the file is of the right type
+    if(!isCFile(path)){
         return false;
     }
+
     ifstream file;
     file.open(path);
     string line;
@@ -38,4 +37,15 @@ bool containsMain(string path){
     file.close();
     return false;
 }
+
+//Return 2 if file extension is .h, 1 if other C/C++ source file, 0 ow
+int isCFile(string fileName){
+    if(regex_match(fileName, regex(".+\\.h"))){
+        return 2;
+    } else if (regex_match(fileName, regex(".+(\\.cpp|\\.cxx|\\.c|\\.C|\\.h)"))){
+        return 1;
+    }
+    return 0;
+}
+
 
